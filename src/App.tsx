@@ -1,7 +1,7 @@
 import React from "react";
-import logo from "./logo.svg";
 import duck from "./duck.png";
 import "./App.css";
+import { Dates } from "./components/dates";
 
 function App() {
   return (
@@ -16,7 +16,7 @@ function App() {
         />
         <br />
         <br />
-        <p>Congrats, you found the duck!</p>
+        <Dates />
       </header>
     </div>
   );
