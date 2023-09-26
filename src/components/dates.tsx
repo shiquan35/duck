@@ -3,6 +3,7 @@ import {
   differenceInCalendarDays,
   differenceInCalendarMonths,
   differenceInDays,
+  parseISO,
 } from "date-fns";
 
 export interface IAppProps {}
@@ -13,7 +14,7 @@ export function Dates(props: IAppProps) {
   const [anniRoundedMonths, setAnniRoundedMonths] = useState<number>();
   const [anniYears, setAnniYears] = useState<number>();
 
-  const [wedding, setWedding] = useState<Date>(new Date(2024, 8, 21));
+  const [wedding, setWedding] = useState<Date>(new Date(2024, 9, 21));
   const [weddingRoundedMonths, setWeddingRoundedMonths] = useState<number>();
   const [weddingYears, setWeddingYears] = useState<number>();
   const [weddingDays, setWeddingDays] = useState<number>();
@@ -34,10 +35,16 @@ export function Dates(props: IAppProps) {
     setWeddingYears(differenceWeddingYears);
     const differenceWeddingRoundedMonths = differenceWeddingMonths % 12;
     setWeddingRoundedMonths(differenceWeddingRoundedMonths);
+    console.log({
+      differenceWeddingMonths,
+      differenceWeddingYears,
+      differenceWeddingRoundedMonths,
+    });
 
-    const dateToday = today.getDate();
+    const targetDate = parseISO("2024-09-21");
+    const differenceWeddingDays = differenceInCalendarDays(targetDate, today);
 
-    setWeddingDays(21 - dateToday);
+    setWeddingDays(differenceWeddingDays);
   }, [today, wedding]);
 
   return (
@@ -53,12 +60,12 @@ export function Dates(props: IAppProps) {
       )}
       <br />
       <h3>Wedding countdown:</h3>
-      {weddingYears === 1 ? `${weddingYears} year,` : `${weddingYears} years,`}
+      {/* {weddingYears === 1 ? `${weddingYears} year,` : `${weddingYears} years,`}
       {"\u00A0"}
       {weddingRoundedMonths === 1 || weddingRoundedMonths === 0
         ? `${weddingRoundedMonths} month`
         : `${weddingRoundedMonths} months`}
-      {"\u00A0"}
+      {"\u00A0"} */}
       {`${weddingDays} days`}
     </>
   );
