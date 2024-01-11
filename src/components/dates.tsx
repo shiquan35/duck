@@ -8,39 +8,45 @@ import {
 
 export interface IAppProps {}
 
-export function Dates(props: IAppProps) {
-  const [today, setToday] = useState<Date>(new Date());
-  const [anni, setAnni] = useState<Date>(new Date(2022, 6, 31));
-  const [anniRoundedMonths, setAnniRoundedMonths] = useState<number>();
-  const [anniYears, setAnniYears] = useState<number>();
+interface HowLong {
+  numYears?: number;
+  numMonths?: number;
+  numDays?: number;
+}
 
+export function Dates(props: IAppProps) {
+  const [startDate, setStartDate] = useState<any>(null);
+  const [howLong, setHowLong] = useState<HowLong>({});
+
+  const [today, setToday] = useState<Date>(new Date());
   const [wedding, setWedding] = useState<Date>(new Date(2024, 9, 21));
-  const [weddingRoundedMonths, setWeddingRoundedMonths] = useState<number>();
-  const [weddingYears, setWeddingYears] = useState<number>();
   const [weddingDays, setWeddingDays] = useState<number>();
 
   useEffect(() => {
-    const differenceAnniMonths = differenceInCalendarMonths(today, anni);
-    // setAnniMonths(differenceAnniMonths);
-    const differenceAnniYears = Math.floor(differenceAnniMonths / 12);
-    setAnniYears(differenceAnniYears);
-    const differenceAnniRoundedMonths = differenceAnniMonths % 12;
-    setAnniRoundedMonths(differenceAnniRoundedMonths);
-    // const differenceAnniDays = differenceInDays(today, anni);
-  }, [today, anni]);
+    setStartDate(new Date("2022-07-31"));
+  }, []);
 
+  // calculate how long we've been together
   useEffect(() => {
-    const differenceWeddingMonths = differenceInCalendarMonths(wedding, today);
-    const differenceWeddingYears = Math.floor(differenceWeddingMonths / 12);
-    setWeddingYears(differenceWeddingYears);
-    const differenceWeddingRoundedMonths = differenceWeddingMonths % 12;
-    setWeddingRoundedMonths(differenceWeddingRoundedMonths);
-    console.log({
-      differenceWeddingMonths,
-      differenceWeddingYears,
-      differenceWeddingRoundedMonths,
-    });
+    const today = new Date();
+    if (startDate) {
+    }
+    const differenceInTime = today.getTime() - startDate; // Ensure startDate is not null
+    const differenceInDays = differenceInTime / (1000 * 3600 * 24);
 
+    const years = Math.floor(differenceInDays / 365);
+    const months = Math.floor((differenceInDays % 365) / 30);
+    const days = Math.floor((differenceInDays % 365) % 30);
+
+    setHowLong({
+      numYears: years,
+      numMonths: months,
+      numDays: days,
+    });
+  }, [startDate]);
+
+  // wedding countdown
+  useEffect(() => {
     const targetDate = parseISO("2024-09-21");
     const differenceWeddingDays = differenceInCalendarDays(targetDate, today);
 
@@ -49,23 +55,29 @@ export function Dates(props: IAppProps) {
 
   return (
     <>
-      {anniYears === 1 ? (
+      {howLong.numYears === 1 ? (
         <h5>
-          We've been together for {anniYears} year, {anniRoundedMonths} months
+          We've been together for:
+          <br />
+          {howLong.numYears} Year,
+          <br />
+          {howLong.numMonths} Months,
+          <br />
+          {howLong.numDays} Days
         </h5>
       ) : (
         <h5>
-          We've been together for {anniYears} years, {anniRoundedMonths} months
+          We've been together for:
+          <br />
+          {howLong.numYears} Years,
+          <br />
+          {howLong.numMonths} Months,
+          <br />
+          {howLong.numDays} Days
         </h5>
       )}
       <br />
       <h3>Wedding countdown:</h3>
-      {/* {weddingYears === 1 ? `${weddingYears} year,` : `${weddingYears} years,`}
-      {"\u00A0"}
-      {weddingRoundedMonths === 1 || weddingRoundedMonths === 0
-        ? `${weddingRoundedMonths} month`
-        : `${weddingRoundedMonths} months`}
-      {"\u00A0"} */}
       {`${weddingDays} days`}
     </>
   );
