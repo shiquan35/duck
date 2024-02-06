@@ -3,6 +3,8 @@ import {
   differenceInCalendarDays,
   differenceInCalendarMonths,
   differenceInDays,
+  differenceInMonths,
+  differenceInYears,
   parseISO,
 } from "date-fns";
 
@@ -15,35 +17,45 @@ interface HowLong {
 }
 
 export function Dates(props: IAppProps) {
-  const [startDate, setStartDate] = useState<any>(null);
   const [howLong, setHowLong] = useState<HowLong>({});
 
   const [today, setToday] = useState<Date>(new Date());
   const [wedding, setWedding] = useState<Date>(new Date(2024, 9, 21));
   const [weddingDays, setWeddingDays] = useState<number>();
 
-  useEffect(() => {
-    setStartDate(new Date("2022-07-31"));
-  }, []);
+  const [marriage, setMarriage] = useState<HowLong>({});
 
-  // calculate how long we've been together
+  // how long we've been together v2
   useEffect(() => {
-    const today = new Date();
-    if (startDate) {
-    }
-    const differenceInTime = today.getTime() - startDate; // Ensure startDate is not null
-    const differenceInDays = differenceInTime / (1000 * 3600 * 24);
+    const startDate = new Date(2022, 6, 31);
 
-    const years = Math.floor(differenceInDays / 365);
-    const months = Math.floor((differenceInDays % 365) / 30);
-    const days = Math.floor((differenceInDays % 365) % 30);
+    const currentDate = new Date();
+
+    // Calculate the differences
+    const yearsPassed = differenceInYears(currentDate, startDate);
+    const monthsPassed =
+      differenceInMonths(currentDate, startDate) - yearsPassed * 12;
+
+    // Get the remaining days after subtracting the years and months
+    const startDatePlusYearsMonths = new Date(startDate);
+    startDatePlusYearsMonths.setFullYear(
+      startDatePlusYearsMonths.getFullYear() + yearsPassed
+    );
+    startDatePlusYearsMonths.setMonth(
+      startDatePlusYearsMonths.getMonth() + monthsPassed
+    );
+    const daysPassed = differenceInDays(currentDate, startDatePlusYearsMonths);
+
+    // console.log(`Years passed: ${yearsPassed}`);
+    // console.log(`Months passed: ${monthsPassed}`);
+    // console.log(`Days passed: ${daysPassed}`);
 
     setHowLong({
-      numYears: years,
-      numMonths: months,
-      numDays: days,
+      numYears: yearsPassed,
+      numMonths: monthsPassed,
+      numDays: daysPassed,
     });
-  }, [startDate]);
+  }, []);
 
   // wedding countdown
   useEffect(() => {
@@ -52,6 +64,38 @@ export function Dates(props: IAppProps) {
 
     setWeddingDays(differenceWeddingDays);
   }, [today, wedding]);
+
+  // how long we've been married
+  useEffect(() => {
+    const startDate = new Date(2024, 8, 21);
+
+    const currentDate = new Date();
+
+    // Calculate the differences
+    const yearsPassed = differenceInYears(currentDate, startDate);
+    const monthsPassed =
+      differenceInMonths(currentDate, startDate) - yearsPassed * 12;
+
+    // Get the remaining days after subtracting the years and months
+    const startDatePlusYearsMonths = new Date(startDate);
+    startDatePlusYearsMonths.setFullYear(
+      startDatePlusYearsMonths.getFullYear() + yearsPassed
+    );
+    startDatePlusYearsMonths.setMonth(
+      startDatePlusYearsMonths.getMonth() + monthsPassed
+    );
+    const daysPassed = differenceInDays(currentDate, startDatePlusYearsMonths);
+
+    console.log(`Years passed: ${yearsPassed}`);
+    console.log(`Months passed: ${monthsPassed}`);
+    console.log(`Days passed: ${daysPassed}`);
+
+    setMarriage({
+      numYears: yearsPassed,
+      numMonths: monthsPassed,
+      numDays: daysPassed,
+    });
+  }, []);
 
   return (
     <>
@@ -77,8 +121,46 @@ export function Dates(props: IAppProps) {
         </h5>
       )}
       <br />
-      <h3>Wedding countdown:</h3>
-      {`${weddingDays} days`}
+      {/* wedding days or day */}
+      {weddingDays && weddingDays > 0 ? (
+        <>
+          {weddingDays === 1 ? (
+            <>
+              <h3>
+                Wedding countdown:
+                <br />
+                {`${weddingDays} day`}
+              </h3>
+            </>
+          ) : (
+            <>
+              <h3>
+                Wedding countdown:
+                <br />
+                {`${weddingDays} days`}
+              </h3>
+            </>
+          )}
+        </>
+      ) : null}
+
+      {/* wedding day */}
+      {weddingDays === 0 ? <h3>We're married!</h3> : null}
+
+      {/* marriage counter */}
+      {marriage.numDays && marriage.numDays > 0 ? (
+        <>
+          <h5>
+            We've been married for:
+            <br />
+            {marriage.numYears} Years,
+            <br />
+            {marriage.numMonths} Months,
+            <br />
+            {marriage.numDays} Days
+          </h5>
+        </>
+      ) : null}
     </>
   );
 }
