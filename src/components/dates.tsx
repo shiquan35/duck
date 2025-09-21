@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from "react";
 import {
-  differenceInCalendarDays,
-  differenceInCalendarMonths,
+  // differenceInCalendarDays,
+  // differenceInCalendarMonths,
   differenceInDays,
   differenceInMonths,
   differenceInYears,
-  parseISO,
+  // parseISO,
 } from "date-fns";
 
 export interface IAppProps {}
@@ -18,10 +18,6 @@ interface HowLong {
 
 export function Dates(props: IAppProps) {
   const [howLong, setHowLong] = useState<HowLong>({});
-
-  const [today, setToday] = useState<Date>(new Date());
-  const [wedding, setWedding] = useState<Date>(new Date(2024, 9, 21));
-  const [weddingDays, setWeddingDays] = useState<number>();
 
   const [marriage, setMarriage] = useState<HowLong>({});
 
@@ -57,14 +53,6 @@ export function Dates(props: IAppProps) {
     });
   }, []);
 
-  // wedding countdown
-  useEffect(() => {
-    const targetDate = parseISO("2024-09-21");
-    const differenceWeddingDays = differenceInCalendarDays(targetDate, today);
-
-    setWeddingDays(differenceWeddingDays);
-  }, [today, wedding]);
-
   // how long we've been married
   useEffect(() => {
     const startDate = new Date(2024, 8, 21);
@@ -86,10 +74,6 @@ export function Dates(props: IAppProps) {
     );
     const daysPassed = differenceInDays(currentDate, startDatePlusYearsMonths);
 
-    console.log(`Years passed: ${yearsPassed}`);
-    console.log(`Months passed: ${monthsPassed}`);
-    console.log(`Days passed: ${daysPassed}`);
-
     setMarriage({
       numYears: yearsPassed,
       numMonths: monthsPassed,
@@ -99,68 +83,71 @@ export function Dates(props: IAppProps) {
 
   return (
     <>
-      {howLong.numYears === 1 ? (
-        <h5>
-          We've been together for:
-          <br />
-          {howLong.numYears} Year,
-          <br />
-          {howLong.numMonths} Months,
-          <br />
-          {howLong.numDays} Days
-        </h5>
-      ) : (
-        <h5>
-          We've been together for:
-          <br />
-          {howLong.numYears} Years,
-          <br />
-          {howLong.numMonths} Months,
-          <br />
-          {howLong.numDays} Days
-        </h5>
-      )}
-      <br />
-      {/* wedding days or day */}
-      {weddingDays && weddingDays > 0 ? (
-        <>
-          {weddingDays === 1 ? (
-            <>
-              <h3>
-                Wedding countdown:
-                <br />
-                {`${weddingDays} day`}
-              </h3>
-            </>
-          ) : (
-            <>
-              <h3>
-                Wedding countdown:
-                <br />
-                {`${weddingDays} days`}
-              </h3>
-            </>
-          )}
-        </>
-      ) : null}
-
-      {/* wedding day */}
-      {weddingDays === 0 ? <h3>We're married!</h3> : null}
+      <h5>
+        We've been together for:
+        <br />
+        {howLong.numYears === 1 ? (
+          <>
+            <span>{howLong.numYears} year</span>
+            <br />
+          </>
+        ) : null}
+        {howLong.numYears && howLong.numYears > 1 ? (
+          <>
+            <span>{howLong.numYears} years</span>
+            <br />
+          </>
+        ) : null}
+        {howLong.numMonths === 1 ? (
+          <>
+            <span>{howLong.numMonths} month</span>
+            <br />
+          </>
+        ) : null}
+        {howLong.numMonths && howLong.numMonths > 1 ? (
+          <>
+            <span>{howLong.numMonths} months</span>
+            <br />
+          </>
+        ) : null}
+        {howLong.numDays === 1 ? (
+          <>
+            <span>{howLong.numDays} day</span>
+          </>
+        ) : null}
+        {howLong.numDays && howLong.numDays > 1 ? (
+          <>
+            <span>{howLong.numDays} days</span>
+          </>
+        ) : null}
+      </h5>
 
       {/* marriage counter */}
-      {marriage.numDays && marriage.numDays > 0 ? (
-        <>
-          <h5>
-            We've been married for:
+      <h5>
+        We've been married for:
+        <br />
+        {marriage.numYears === 1 ? (
+          <span>{marriage.numYears} year</span>
+        ) : (
+          <span>{marriage.numYears} years</span>
+        )}{" "}
+        <br />
+        {marriage.numMonths === 1 ? (
+          <span>{marriage.numMonths} month</span>
+        ) : null}
+        {marriage.numMonths && marriage.numMonths > 1 ? (
+          <>
+            <span>{marriage.numMonths} months</span>
             <br />
-            {marriage.numYears} Years,
-            <br />
-            {marriage.numMonths} Months,
-            <br />
-            {marriage.numDays} Days
-          </h5>
-        </>
-      ) : null}
+          </>
+        ) : null}{" "}
+        {marriage.numDays === 1 ? <span>{marriage.numDays} day</span> : null}
+        {marriage.numDays && marriage.numDays > 1 ? (
+          <>
+            <span>{marriage.numDays} days</span>
+          </>
+        ) : null}
+      </h5>
     </>
   );
 }
